@@ -11,6 +11,7 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -19,7 +20,7 @@ import retrofit2.Retrofit;
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "Jason_Chien";
 
-    View loginBtn;
+    View loginBtn, registerBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,32 +67,76 @@ public class MainActivity extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Retrofit retrofit = NetworkWrapper.create();
-                Api api = retrofit.create(Api.class);
-                api.login("125")
-                    .subscribeOn(Schedulers.io())               //Use io thread to process network request
-                    .observeOn(AndroidSchedulers.mainThread())  //Back to Main thread
-                    .subscribe(new Observer<LoginResponse>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-                        }
-
-                        @Override
-                        public void onNext(LoginResponse value) {
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Toast.makeText(MainActivity.this, "Fail", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
+                login();
             }
         });
+
+        registerBtn = findViewById(R.id.register);
+        registerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                register();
+            }
+        });
+    }
+
+    private void login() {
+        Retrofit retrofit = NetworkWrapper.create();
+        Api api = retrofit.create(Api.class);
+        api.login("125")
+            .subscribeOn(Schedulers.io())               //Use io thread to process network request
+            .observeOn(AndroidSchedulers.mainThread())  //Back to Main thread
+            .subscribe(new Observer<LoginResponse>() {
+                @Override
+                public void onSubscribe(Disposable d) {
+                }
+
+                @Override
+                public void onNext(LoginResponse value) {
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Toast.makeText(MainActivity.this, "Fail", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onComplete() {
+                    Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_SHORT).show();
+                }
+            });
+    }
+
+
+    private void register() {
+        Retrofit retrofit = NetworkWrapper.create();
+        Api api = retrofit.create(Api.class);
+        RegisterRequest registerRequest = new RegisterRequest().setName("ee");
+        api.register(registerRequest)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<RegisterResponse>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@NonNull RegisterResponse registerResponse) {
+
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Toast.makeText(MainActivity.this, "Register fail", Toast.LENGTH_SHORT).show();
+                        Log.e("JASON_CHIEN", "Register fail");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Toast.makeText(MainActivity.this, "Register Success", Toast.LENGTH_SHORT).show();
+                        Log.e("JASON_CHIEN", "Register success");
+                    }
+                });
     }
 }

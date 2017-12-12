@@ -1,7 +1,10 @@
 package com.chiachen.rxjavapractices;
 
 import io.reactivex.Observable;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 /**
@@ -10,7 +13,7 @@ import retrofit2.http.Path;
 
 public interface Api {
     // It's local host
-    String BASE_URL = "http://192.168.0.104:3000/";
+    String BASE_URL = "http://192.168.1.133:3000/";
 
     /**
      *  To login
@@ -19,4 +22,8 @@ public interface Api {
      */
     @GET("members/{id}")
     Observable<LoginResponse> login(@Path("id") String newId);
+
+    @POST("members")
+    @Headers("Content-Type: application/json")
+    Observable<RegisterResponse> register(@Body RegisterRequest request);
 }
