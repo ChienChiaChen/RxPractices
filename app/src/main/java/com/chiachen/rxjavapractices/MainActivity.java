@@ -100,6 +100,39 @@ public class MainActivity extends AppCompatActivity {
                 flatMap();
             }
         });
+
+        findViewById(R.id.concatMap).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                concatMap();
+            }
+        });
+    }
+
+    private void concatMap() {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<Integer> e) throws Exception {
+                e.onNext(1);
+                e.onNext(2);
+                e.onNext(3);
+                e.onNext(4);
+            }
+        }).concatMap(new Function<Integer, ObservableSource<String>>() {
+            @Override
+            public ObservableSource<String> apply(@NonNull Integer integer) throws Exception {
+                List<String> list = new ArrayList<>();
+                for (int i=0;i<3;i++) {
+                    list.add("concatMap: " + integer);
+                }
+                return Observable.fromIterable(list).delay(5, TimeUnit.MILLISECONDS);
+            }
+        }).subscribe(new Consumer<String>() {
+            @Override
+            public void accept(String s) throws Exception {
+                Log.e("JASON_CHIEN", s);
+            }
+        });
     }
 
     private void flatMap() {

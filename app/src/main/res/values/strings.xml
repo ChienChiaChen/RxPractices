@@ -4,4 +4,6 @@
     <string name="register">Register</string>
     <string name="map">Map</string>
     <string name="flat_map">flatMap</string>
+    <string name="concat_map">concatMap</string>
+    <string name="register_login"><![CDATA[Register&Login]]></string>
 </resources>

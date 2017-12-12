@@ -41,6 +41,15 @@
         />
 
     <Button
+        android:id="@+id/register_login"
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:text="@string/register_login"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@id/login"
+        />
+
+    <Button
         android:id="@+id/map"
         android:layout_width="150dp"
         android:layout_height="80dp"
@@ -56,4 +65,13 @@
         android:textAllCaps="false"
         app:layout_constraintLeft_toLeftOf="parent"
         />
+
+    <Button
+        android:id="@+id/concatMap"
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:text="@string/concat_map"
+        android:textAllCaps="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/flatMap"/>
 </android.support.constraint.ConstraintLayout>
