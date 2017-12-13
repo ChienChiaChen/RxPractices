@@ -50,6 +50,15 @@
         />
 
     <Button
+        android:id="@+id/zip_info"
+        android:layout_width="150dp"
+        android:layout_height="80dp"
+        android:text="@string/zip_info"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toTopOf="@id/register"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <Button
         android:id="@+id/map"
         android:layout_width="150dp"
         android:layout_height="80dp"

@@ -236,6 +236,13 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+
+        findViewById(R.id.zip_info).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ZipExample.getInstance().request();
+            }
+        });
     }
 
     private void concatMap() {
