@@ -8,4 +8,6 @@
     <string name="register_login"><![CDATA[Register&Login]]></string>
     <string name="zip">zip</string>
     <string name="zip_info">Zip Info</string>
+    <string name="flowable">Flowable</string>
+    <string name="start_handle">Start Handle</string>
 </resources>

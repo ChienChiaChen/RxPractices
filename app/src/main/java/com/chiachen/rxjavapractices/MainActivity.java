@@ -6,10 +6,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -28,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "Jason_Chien";
 
     View loginBtn, registerBtn, map, flapMap;
+
+    Subscription mSubscription;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -243,6 +253,66 @@ public class MainActivity extends AppCompatActivity {
                 ZipExample.getInstance().request();
             }
         });
+
+        findViewById(R.id.flowable).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Flowable<Integer> upstream = Flowable.create(new FlowableOnSubscribe<Integer>() {
+                    @Override
+                    public void subscribe(@NonNull FlowableEmitter<Integer> e) throws Exception {
+                        Log.e("JASON_CHIEN", "Emitter: 1");
+                        e.onNext(1);
+                        Log.e("JASON_CHIEN", "Emitter: 2");
+                        e.onNext(2);
+                        Log.e("JASON_CHIEN", "Emitter: 3");
+                        e.onNext(3);
+                        Log.e("JASON_CHIEN", "Emitter: 4");
+                        e.onNext(4);
+                        Log.e("JASON_CHIEN", "Emitter: onComplete");
+                        e.onComplete();
+                    }
+                }, BackpressureStrategy.ERROR)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io());
+
+                Subscriber<Integer> downstream =new Subscriber<Integer>() {
+                    @Override
+                    public void onSubscribe(Subscription s) {
+                        Log.e("JASON_CHIEN", "onSubscribe");
+                        // s.request(Long.MAX_VALUE);
+                        mSubscription = s;
+                    }
+
+                    @Override
+                    public void onNext(Integer integer) {
+                        Log.e("JASON_CHIEN", "onNext" +integer);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Log.e("JASON_CHIEN", "onError");
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.e("JASON_CHIEN", "onComplete");
+                    }
+                };
+
+                upstream.subscribe(downstream);
+            }
+        });
+
+        findViewById(R.id.start_handle).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                request(1);
+            }
+        });
+    }
+
+    public void request(long n) {
+        mSubscription.request(n); //外部呼叫 request 請求上游
     }
 
     private void concatMap() {
