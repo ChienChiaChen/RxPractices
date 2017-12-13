@@ -260,27 +260,20 @@ public class MainActivity extends AppCompatActivity {
                 Flowable<Integer> upstream = Flowable.create(new FlowableOnSubscribe<Integer>() {
                     @Override
                     public void subscribe(@NonNull FlowableEmitter<Integer> e) throws Exception {
-                        Log.e("JASON_CHIEN", "Emitter: 1");
-                        e.onNext(1);
-                        Log.e("JASON_CHIEN", "Emitter: 2");
-                        e.onNext(2);
-                        Log.e("JASON_CHIEN", "Emitter: 3");
-                        e.onNext(3);
-                        Log.e("JASON_CHIEN", "Emitter: 4");
-                        e.onNext(4);
-                        Log.e("JASON_CHIEN", "Emitter: onComplete");
-                        e.onComplete();
+                        Log.e(TAG, "current requested: " + e.requested());
                     }
-                }, BackpressureStrategy.ERROR)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(Schedulers.io());
+                }, BackpressureStrategy.ERROR);
+                        // .subscribeOn(Schedulers.io())
+                        // .observeOn(Schedulers.io());
 
                 Subscriber<Integer> downstream =new Subscriber<Integer>() {
                     @Override
                     public void onSubscribe(Subscription s) {
                         Log.e("JASON_CHIEN", "onSubscribe");
                         // s.request(Long.MAX_VALUE);
-                        mSubscription = s;
+                        // mSubscription = s;
+                        s.request(10);
+                        s.request(100);
                     }
 
                     @Override
