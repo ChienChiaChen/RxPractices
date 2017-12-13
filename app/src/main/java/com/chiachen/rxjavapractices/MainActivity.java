@@ -281,8 +281,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.e("JASON_CHIEN", "onSubscribe");
                         // s.request(Long.MAX_VALUE);
                         // mSubscription = s;
-                        s.request(10);
-                        s.request(100);
+                        s.request(1);
+                        // s.request(100);
                     }
 
                     @Override
