@@ -260,6 +260,15 @@ public class MainActivity extends AppCompatActivity {
                 Flowable<Integer> upstream = Flowable.create(new FlowableOnSubscribe<Integer>() {
                     @Override
                     public void subscribe(@NonNull FlowableEmitter<Integer> e) throws Exception {
+                        Log.e("JASON_CHIEN", "before");
+                        Log.e("JASON_CHIEN", "emit: 1");
+                        e.onNext(1);
+                        Log.e(TAG, "current requested: " + e.requested());
+                        Log.e("JASON_CHIEN", "emit: 2");
+                        e.onNext(2);
+                        Log.e(TAG, "current requested: " + e.requested());
+                        Log.e("JASON_CHIEN", "emit: 3");
+                        e.onNext(3);
                         Log.e(TAG, "current requested: " + e.requested());
                     }
                 }, BackpressureStrategy.ERROR);
