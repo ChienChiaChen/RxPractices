@@ -107,16 +107,80 @@ public class MainActivity extends AppCompatActivity {
                 concatMap();
             }
         });
+
+        findViewById(R.id.register_login).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                attemptRegisterLogin();
+            }
+
+            private void attemptRegisterLogin() {
+                Retrofit retrofit = NetworkWrapper.create();
+                final Api api = retrofit.create(Api.class);
+                api.register(new RegisterRequest().setName("jason hi"))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnNext(new Consumer<RegisterResponse>() {
+                            @Override
+                            public void accept(RegisterResponse registerResponse) throws Exception {
+                                if (null != registerResponse) {
+                                    Log.e("JASON_CHIEN", "Register success");
+                                    Log.e("JASON_CHIEN", "RegisterResponse id: "+registerResponse.getId());
+                                    Log.e("JASON_CHIEN", "RegisterResponse name: "+registerResponse.getName());
+                                }
+                            }
+                        })
+                        .observeOn(Schedulers.io())
+                        .flatMap(new Function<RegisterResponse, ObservableSource<LoginResponse>>() {
+                            @Override
+                            public ObservableSource<LoginResponse> apply(RegisterResponse registerResponse) throws Exception {
+                                return api.login(registerResponse.getId());
+                            }
+                        })
+                        .observeOn(AndroidSchedulers.mainThread()).doOnNext(new Consumer<LoginResponse>() {
+                            @Override
+                            public void accept(LoginResponse loginResponse) throws Exception {
+                                Log.e("JASON_CHIEN", "processing");
+                            }
+                        })
+                        .subscribe(new Observer<LoginResponse>() {
+                            @Override
+                            public void onSubscribe(@NonNull Disposable d) {
+                                Log.e("JASON_CHIEN", "onSubscribe");
+                            }
+
+                            @Override
+                            public void onNext(@NonNull LoginResponse loginResponse) {
+                                Log.e("JASON_CHIEN", "onNext");
+                                Log.e("JASON_CHIEN", "LoginResponse id: "+loginResponse.getId());
+                                Log.e("JASON_CHIEN", "LoginResponse name: "+loginResponse.getName());
+                            }
+
+                            @Override
+                            public void onError(@NonNull Throwable e) {
+                                Log.e("JASON_CHIEN", "onError");
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                Log.e("JASON_CHIEN", "onComplete");
+                            }
+                        });
+
+            }
+        });
     }
 
     private void concatMap() {
         Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<Integer> e) throws Exception {
+                Log.e("JASON_CHIEN", "emit: 1");
                 e.onNext(1);
+                Log.e("JASON_CHIEN", "emit: 2");
                 e.onNext(2);
+                Log.e("JASON_CHIEN", "emit: 3");
                 e.onNext(3);
-                e.onNext(4);
             }
         }).concatMap(new Function<Integer, ObservableSource<String>>() {
             @Override
@@ -139,9 +203,13 @@ public class MainActivity extends AppCompatActivity {
         Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<Integer> e) throws Exception {
+                Log.e("JASON_CHIEN", "emit: 1");
                 e.onNext(1);
+                Log.e("JASON_CHIEN", "emit: 2");
                 e.onNext(2);
+                Log.e("JASON_CHIEN", "emit: 3");
                 e.onNext(3);
+                Log.e("JASON_CHIEN", "emit: 4");
                 e.onNext(4);
             }
         }).flatMap(new Function<Integer, ObservableSource<String>>() {
@@ -165,11 +233,14 @@ public class MainActivity extends AppCompatActivity {
         Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(@NonNull ObservableEmitter<Integer> e) throws Exception {
+                Log.e("JASON_CHIEN", "emit: 1");
                 e.onNext(1);
+                Log.e("JASON_CHIEN", "emit: 2");
                 e.onNext(2);
+                Log.e("JASON_CHIEN", "emit: 3");
                 e.onNext(3);
+                Log.e("JASON_CHIEN", "emit: 4");
                 e.onNext(4);
-
             }
         }).map(new Function<Integer, String>() {
             @Override
