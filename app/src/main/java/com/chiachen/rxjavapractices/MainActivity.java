@@ -18,6 +18,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.BiFunction;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -167,6 +168,50 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
+            }
+        });
+
+        findViewById(R.id.zip).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Observable<Integer> observable1 = Observable.create(new ObservableOnSubscribe<Integer>() {
+                    @Override
+                    public void subscribe(@NonNull ObservableEmitter<Integer> e) throws Exception {
+                        Log.e("JASON_CHIEN", "observable1 emit "+1);
+                        e.onNext(1);
+                        Log.e("JASON_CHIEN", "observable1 emit "+2);
+                        e.onNext(2);
+                        Log.e("JASON_CHIEN", "observable1 emit "+3);
+                        e.onNext(3);
+                    }
+                });
+
+                Observable<String> observable2 = Observable.create(new ObservableOnSubscribe<String>() {
+                    @Override
+                    public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
+                        Log.e("JASON_CHIEN", "observable2 emit A");
+                        e.onNext("A");
+                        Log.e("JASON_CHIEN", "observable2 emit B");
+                        e.onNext("B");
+                        Log.e("JASON_CHIEN", "observable2 emit C");
+                        e.onNext("C");
+                        Log.e("JASON_CHIEN", "observable2 emit D");
+                        e.onNext("D");
+                    }
+                });
+
+                Observable.zip(observable1, observable2, new BiFunction<Integer, String, String>() {
+                    @Override
+                    public String apply(@NonNull Integer i, @NonNull String s) throws Exception {
+                        return s+i;
+                    }
+                }).subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String s) throws Exception {
+                        Log.e("JASON_CHIEN", "accept: " + s);
+                    }
+                });
             }
         });
     }
