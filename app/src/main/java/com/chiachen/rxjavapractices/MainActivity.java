@@ -178,28 +178,50 @@ public class MainActivity extends AppCompatActivity {
                 Observable<Integer> observable1 = Observable.create(new ObservableOnSubscribe<Integer>() {
                     @Override
                     public void subscribe(@NonNull ObservableEmitter<Integer> e) throws Exception {
+                        Log.e("JASON_CHIEN", "Current Thread: "+Thread.currentThread().getName());
+
                         Log.e("JASON_CHIEN", "observable1 emit "+1);
                         e.onNext(1);
+                        Thread.sleep(1000);
+
                         Log.e("JASON_CHIEN", "observable1 emit "+2);
                         e.onNext(2);
+                        Thread.sleep(1000);
+
                         Log.e("JASON_CHIEN", "observable1 emit "+3);
                         e.onNext(3);
+                        Thread.sleep(1000);
+
+                        // Log.e("JASON_CHIEN", "observable1 emit "+4);
+                        // e.onNext(4);
+                        // Thread.sleep(1000);
+
+                        Log.e("JASON_CHIEN", "observable1 complete ");
+                        e.onComplete();
                     }
-                });
+                }).subscribeOn(Schedulers.io());
 
                 Observable<String> observable2 = Observable.create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
+                        Log.e("JASON_CHIEN", "Current Thread: "+Thread.currentThread().getName());
+
                         Log.e("JASON_CHIEN", "observable2 emit A");
                         e.onNext("A");
+                        Thread.sleep(1000);
                         Log.e("JASON_CHIEN", "observable2 emit B");
                         e.onNext("B");
+                        Thread.sleep(1000);
                         Log.e("JASON_CHIEN", "observable2 emit C");
                         e.onNext("C");
+                        Thread.sleep(1000);
                         Log.e("JASON_CHIEN", "observable2 emit D");
                         e.onNext("D");
+                        Log.e("JASON_CHIEN", "observable2 complete ");
+                        e.onComplete();
+
                     }
-                });
+                }).subscribeOn(Schedulers.io());
 
                 Observable.zip(observable1, observable2, new BiFunction<Integer, String, String>() {
                     @Override
