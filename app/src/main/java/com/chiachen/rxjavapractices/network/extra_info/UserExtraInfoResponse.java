@@ -1,10 +1,10 @@
-package com.chiachen.rxjavapractices;
+package com.chiachen.rxjavapractices.network.extra_info;
 
 /**
  * Created by jianjiacheng on 13/12/2017.
  */
 
-class UserExtraInfoResponse {
+public class UserExtraInfoResponse {
     private String age, id;
 
     public String getId() {

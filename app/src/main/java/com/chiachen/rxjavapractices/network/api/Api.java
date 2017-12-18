@@ -1,4 +1,10 @@
-package com.chiachen.rxjavapractices;
+package com.chiachen.rxjavapractices.network.api;
+
+
+
+import com.chiachen.rxjavapractices.network.login.LoginResponse;
+import com.chiachen.rxjavapractices.network.register.RegisterRequest;
+import com.chiachen.rxjavapractices.network.register.RegisterResponse;
 
 import io.reactivex.Observable;
 import retrofit2.http.Body;
@@ -13,7 +19,7 @@ import retrofit2.http.Path;
 
 public interface Api {
     // It's local host
-    String BASE_URL = "http://192.168.0.104:3000/";
+    String BASE_URL = "http://192.168.0.118:3000/";
 
     /**
      *  To login

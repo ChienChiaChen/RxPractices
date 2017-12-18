@@ -1,17 +1,18 @@
-package com.chiachen.rxjavapractices;
+package com.chiachen.rxjavapractices.network.login;
 
 /**
  * Created by jianjiacheng on 12/12/2017.
  */
 
-class RegisterResponse {
-    private String name, id;
+public class LoginResponse {
+    public String name;
+    private String id;
 
     public String getName() {
         return name;
     }
 
-    public RegisterResponse setName(String name) {
+    public LoginResponse setName(String name) {
         this.name = name;
         return this;
     }
@@ -20,7 +21,7 @@ class RegisterResponse {
         return id;
     }
 
-    public RegisterResponse setId(String id) {
+    public LoginResponse setId(String id) {
         this.id = id;
         return this;
     }

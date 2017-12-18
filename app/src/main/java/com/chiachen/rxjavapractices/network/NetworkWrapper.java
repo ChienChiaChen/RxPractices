@@ -1,5 +1,7 @@
-package com.chiachen.rxjavapractices;
+package com.chiachen.rxjavapractices.network;
 
+import com.chiachen.rxjavapractices.BuildConfig;
+import com.chiachen.rxjavapractices.network.api.Api;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.util.concurrent.TimeUnit;

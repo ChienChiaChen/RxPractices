@@ -1,10 +1,18 @@
-package com.chiachen.rxjavapractices;
+package com.chiachen.rxjavapractices.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import com.chiachen.rxjavapractices.R;
+import com.chiachen.rxjavapractices.ZipExample;
+import com.chiachen.rxjavapractices.network.api.Api;
+import com.chiachen.rxjavapractices.network.NetworkWrapper;
+import com.chiachen.rxjavapractices.network.login.LoginResponse;
+import com.chiachen.rxjavapractices.network.register.RegisterRequest;
+import com.chiachen.rxjavapractices.network.register.RegisterResponse;
 
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;

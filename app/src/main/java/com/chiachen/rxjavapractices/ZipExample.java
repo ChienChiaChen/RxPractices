@@ -2,6 +2,11 @@ package com.chiachen.rxjavapractices;
 
 import android.util.Log;
 
+import com.chiachen.rxjavapractices.network.NetworkWrapper;
+import com.chiachen.rxjavapractices.network.api.UserApi;
+import com.chiachen.rxjavapractices.network.base_info.UserBaseInfoResponse;
+import com.chiachen.rxjavapractices.network.extra_info.UserExtraInfoResponse;
+
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.BiFunction;

@@ -1,10 +1,10 @@
-package com.chiachen.rxjavapractices;
+package com.chiachen.rxjavapractices.network.register;
 
 /**
  * Created by jianjiacheng on 12/12/2017.
  */
 
-class RegisterRequest {
+public class RegisterRequest {
     public String name;
     private int id;
 

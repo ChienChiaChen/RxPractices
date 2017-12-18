@@ -1,10 +1,10 @@
-package com.chiachen.rxjavapractices;
+package com.chiachen.rxjavapractices.network.base_info;
 
 /**
  * Created by jianjiacheng on 13/12/2017.
  */
 
-class UserBaseInfoResponse {
+public class UserBaseInfoResponse {
     private String name, id;
 
     public String getId() {

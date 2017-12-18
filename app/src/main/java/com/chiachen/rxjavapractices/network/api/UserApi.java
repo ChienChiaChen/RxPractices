@@ -1,5 +1,8 @@
-package com.chiachen.rxjavapractices;
+package com.chiachen.rxjavapractices.network.api;
 
+
+import com.chiachen.rxjavapractices.network.base_info.UserBaseInfoResponse;
+import com.chiachen.rxjavapractices.network.extra_info.UserExtraInfoResponse;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
