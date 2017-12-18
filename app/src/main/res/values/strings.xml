@@ -10,4 +10,6 @@
     <string name="zip_info">Zip Info</string>
     <string name="flowable">Flowable</string>
     <string name="start_handle">Start Handle</string>
+    <string name="account">Account</string>
+    <string name="password">Password</string>
 </resources>
