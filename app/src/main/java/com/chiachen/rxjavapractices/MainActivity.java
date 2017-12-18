@@ -260,29 +260,32 @@ public class MainActivity extends AppCompatActivity {
                 Flowable<Integer> upstream = Flowable.create(new FlowableOnSubscribe<Integer>() {
                     @Override
                     public void subscribe(@NonNull FlowableEmitter<Integer> e) throws Exception {
-                        Log.e("JASON_CHIEN", "before");
-                        Log.e("JASON_CHIEN", "emit: 1");
-                        e.onNext(1);
-                        Log.e(TAG, "current requested: " + e.requested());
-                        Log.e("JASON_CHIEN", "emit: 2");
-                        e.onNext(2);
-                        Log.e(TAG, "current requested: " + e.requested());
-                        Log.e("JASON_CHIEN", "emit: 3");
-                        e.onNext(3);
-                        Log.e(TAG, "current requested: " + e.requested());
+                        Log.e(TAG, "First requested = " + e.requested());
+                        boolean flag;
+                        for (int i = 0; ; i++) {
+                            flag = false;
+                            while (e.requested() == 0) {
+                                if (!flag) {
+                                    Log.d(TAG, "Oh no! I can't emit value!");
+                                    flag = true;
+                                }
+                            }
+                            e.onNext(i);
+                            Log.e(TAG, "emit " + i + " , requested = " + e.requested());
+                        }
                     }
-                }, BackpressureStrategy.ERROR);
-                        // .subscribeOn(Schedulers.io())
-                        // .observeOn(Schedulers.io());
+                }, BackpressureStrategy.ERROR)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(Schedulers.io());
 
                 Subscriber<Integer> downstream =new Subscriber<Integer>() {
                     @Override
                     public void onSubscribe(Subscription s) {
                         Log.e("JASON_CHIEN", "onSubscribe");
                         // s.request(Long.MAX_VALUE);
-                        // mSubscription = s;
-                        s.request(1);
-                        // s.request(100);
+                        mSubscription = s;
+                        // s.request(1);
+                        // s.request(1000);
                     }
 
                     @Override
@@ -308,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.start_handle).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                request(1);
+                request(100);
             }
         });
     }
