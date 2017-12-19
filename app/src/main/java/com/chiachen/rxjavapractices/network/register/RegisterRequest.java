@@ -6,6 +6,7 @@ package com.chiachen.rxjavapractices.network.register;
 
 public class RegisterRequest {
     public String name;
+    public String pwd;
     private int id;
 
     public String getName() {
@@ -23,6 +24,15 @@ public class RegisterRequest {
 
     public RegisterRequest setId(int id) {
         this.id = id;
+        return this;
+    }
+
+    public String getPwd() {
+        return pwd;
+    }
+
+    public RegisterRequest setPwd(String pwd) {
+        this.pwd = pwd;
         return this;
     }
 }
