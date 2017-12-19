@@ -12,8 +12,11 @@ import com.chiachen.rxjavapractices.CommonUtils;
 import com.chiachen.rxjavapractices.R;
 import com.chiachen.rxjavapractices.network.NetworkWrapper;
 import com.chiachen.rxjavapractices.network.api.Api;
+import com.chiachen.rxjavapractices.network.login.LoginResponse;
 import com.chiachen.rxjavapractices.network.register.RegisterRequest;
 import com.chiachen.rxjavapractices.network.register.RegisterResponse;
+
+import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -36,10 +39,40 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.login).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // 1-1 Get data
-                // 1-2 Data
-                // 1-3
+                String account = ((EditText)findViewById(R.id.account)).getText().toString();
+                String pwd = ((EditText) findViewById(R.id.pwd)).getText().toString();
+                if (TextUtils.isEmpty(account) || TextUtils.isEmpty(pwd)) {
+                    Toast.makeText(LoginActivity.this, "NO_DATA", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
+                Retrofit retrofit = NetworkWrapper.create();
+                final Api api = retrofit.create(Api.class);
+
+                api.login(account,pwd)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<List<LoginResponse>>() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onNext(List<LoginResponse> loginResponses) {
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                CommonUtils.showToast(LoginActivity.this, "Login Failed");
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                CommonUtils.showToast(LoginActivity.this, "Login Success");
+                            }
+                        });
             }
         });
 
@@ -73,13 +106,13 @@ public class LoginActivity extends AppCompatActivity {
 
                             @Override
                             public void onError(Throwable e) {
-                                CommonUtils.showToast(LoginActivity.this, "Failed");
+                                CommonUtils.showToast(LoginActivity.this, "Register Failed");
 
                             }
 
                             @Override
                             public void onComplete() {
-                                CommonUtils.showToast(LoginActivity.this, "Success");
+                                CommonUtils.showToast(LoginActivity.this, "Register Success");
                             }
                         });
             }
