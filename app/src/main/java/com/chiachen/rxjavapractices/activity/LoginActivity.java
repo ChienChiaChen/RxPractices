@@ -1,5 +1,6 @@
 package com.chiachen.rxjavapractices.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -15,13 +16,12 @@ import com.chiachen.rxjavapractices.network.api.Api;
 import com.chiachen.rxjavapractices.network.login.LoginResponse;
 import com.chiachen.rxjavapractices.network.register.RegisterRequest;
 import com.chiachen.rxjavapractices.network.register.RegisterResponse;
+import com.chiachen.rxjavapractices.utils.rx.AppSchedulerProvider;
 
 import java.util.List;
 
 import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 
 /**
@@ -50,8 +50,8 @@ public class LoginActivity extends AppCompatActivity {
                 final Api api = retrofit.create(Api.class);
 
                 api.login(account,pwd)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(AppSchedulerProvider.io())
+                        .observeOn(AppSchedulerProvider.ui())
                         .subscribe(new Observer<List<LoginResponse>>() {
                             @Override
                             public void onSubscribe(Disposable d) {
@@ -71,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete() {
                                 CommonUtils.showToast(LoginActivity.this, "Login Success");
+                                openHomeActivity();
                             }
                         });
             }
@@ -93,8 +94,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 RegisterRequest registerRequest = new RegisterRequest().setName(account).setPwd(pwd);
                 api.register(registerRequest)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(AppSchedulerProvider.io())
+                        .observeOn(AppSchedulerProvider.ui())
                         .subscribe(new Observer<RegisterResponse>() {
                             @Override
                             public void onSubscribe(Disposable d) {
@@ -117,5 +118,12 @@ public class LoginActivity extends AppCompatActivity {
                         });
             }
         });
+    }
+
+
+    private void openHomeActivity() {
+        Intent intent = HomeActivity.getStartIntent(LoginActivity.this);
+        startActivity(intent);
+        finish();
     }
 }
