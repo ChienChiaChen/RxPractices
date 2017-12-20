@@ -20,8 +20,11 @@ import com.chiachen.rxjavapractices.utils.rx.AppSchedulerProvider;
 
 import java.util.List;
 
+import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import retrofit2.Retrofit;
 
 /**
@@ -50,43 +53,42 @@ public class LoginActivity extends AppCompatActivity {
                 final Api api = retrofit.create(Api.class);
 
                 api.login(account,pwd)
-                        .subscribeOn(AppSchedulerProvider.io())
-                        .observeOn(AppSchedulerProvider.ui())
-                        .subscribe(new Observer<List<LoginResponse>>() {
-                            @Override
-                            public void onSubscribe(Disposable d) {
+                    .subscribeOn(AppSchedulerProvider.io())
+                    .observeOn(AppSchedulerProvider.ui())
+                    .subscribe(new Observer<List<LoginResponse>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
 
-                            }
+                        }
 
-                            @Override
-                            public void onNext(List<LoginResponse> loginResponses) {
+                        @Override
+                        public void onNext(List<LoginResponse> loginResponses) {
 
-                            }
+                        }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                CommonUtils.showToast(LoginActivity.this, "Login Failed");
-                            }
+                        @Override
+                        public void onError(Throwable e) {
+                            CommonUtils.showToast(LoginActivity.this, "Login Failed");
+                        }
 
-                            @Override
-                            public void onComplete() {
-                                CommonUtils.showToast(LoginActivity.this, "Login Success");
-                                openHomeActivity();
-                            }
-                        });
+                        @Override
+                        public void onComplete() {
+                            CommonUtils.showToast(LoginActivity.this, "Login Success");
+                            openHomeActivity();
+                        }
+                    });
             }
         });
 
         findViewById(R.id.register).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String account = ((EditText)findViewById(R.id.account)).getText().toString();
-                String pwd = ((EditText) findViewById(R.id.pwd)).getText().toString();
+                final String account = ((EditText)findViewById(R.id.account)).getText().toString();
+                final String pwd = ((EditText) findViewById(R.id.pwd)).getText().toString();
                 if (TextUtils.isEmpty(account) || TextUtils.isEmpty(pwd)) {
                     Toast.makeText(LoginActivity.this, "NO_DATA", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
 
                 // Post data
                 Retrofit retrofit = NetworkWrapper.create();
@@ -94,28 +96,44 @@ public class LoginActivity extends AppCompatActivity {
 
                 RegisterRequest registerRequest = new RegisterRequest().setName(account).setPwd(pwd);
                 api.register(registerRequest)
-                        .subscribeOn(AppSchedulerProvider.io())
-                        .observeOn(AppSchedulerProvider.ui())
-                        .subscribe(new Observer<RegisterResponse>() {
-                            @Override
-                            public void onSubscribe(Disposable d) {
-                            }
+                    .subscribeOn(AppSchedulerProvider.io())
+                    .observeOn(AppSchedulerProvider.ui())
+                    .doOnNext(new Consumer<RegisterResponse>() {
+                       @Override
+                       public void accept(RegisterResponse registerResponse) throws Exception {
+                           CommonUtils.showToast(LoginActivity.this, (null == registerResponse) ? "Register fails" : "Register success");
+                       }
+                    })
+                    .observeOn(AppSchedulerProvider.io())
+                    .flatMap(new Function<RegisterResponse, ObservableSource<List<LoginResponse>>>() {
+                        @Override
+                        public ObservableSource<List<LoginResponse>> apply(RegisterResponse registerResponse) throws Exception {
+                            return api.login(account, pwd);
+                        }
+                    })
+                    .observeOn(AppSchedulerProvider.ui())
+                    .subscribe(new Observer<List<LoginResponse>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
 
-                            @Override
-                            public void onNext(RegisterResponse registerResponse) {
-                            }
+                        }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                CommonUtils.showToast(LoginActivity.this, "Register Failed");
+                        @Override
+                        public void onNext(List<LoginResponse> loginResponses) {
 
-                            }
+                        }
 
-                            @Override
-                            public void onComplete() {
-                                CommonUtils.showToast(LoginActivity.this, "Register Success");
-                            }
-                        });
+                        @Override
+                        public void onError(Throwable e) {
+                            CommonUtils.showToast(LoginActivity.this, "Login failed");
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            CommonUtils.showToast(LoginActivity.this, "Login Success");
+                            openHomeActivity();
+                        }
+                    });
             }
         });
     }
