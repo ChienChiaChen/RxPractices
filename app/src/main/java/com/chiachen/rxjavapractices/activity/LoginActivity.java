@@ -4,80 +4,35 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.chiachen.rxjavapractices.CommonUtils;
 import com.chiachen.rxjavapractices.R;
-import com.chiachen.rxjavapractices.network.NetworkWrapper;
-import com.chiachen.rxjavapractices.network.api.Api;
-import com.chiachen.rxjavapractices.network.login.LoginResponse;
-import com.chiachen.rxjavapractices.network.register.RegisterRequest;
-import com.chiachen.rxjavapractices.network.register.RegisterResponse;
-import com.chiachen.rxjavapractices.utils.rx.AppSchedulerProvider;
-
-import java.util.List;
-
-import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import retrofit2.Retrofit;
+import com.chiachen.rxjavapractices.presenter.LoginPresenter;
+import com.chiachen.rxjavapractices.view.LoginView;
 
 /**
  * Created by jianjiacheng on 18/12/2017.
  */
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements LoginView {
 
+    private LoginPresenter mPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mPresenter = new LoginPresenter(this);
 
         findViewById(R.id.login).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String account = ((EditText)findViewById(R.id.account)).getText().toString();
-                String pwd = ((EditText) findViewById(R.id.pwd)).getText().toString();
-                if (TextUtils.isEmpty(account) || TextUtils.isEmpty(pwd)) {
-                    Toast.makeText(LoginActivity.this, "NO_DATA", Toast.LENGTH_SHORT).show();
-                    return;
+                @Override
+                public void onClick(View v) {
+                    String account = ((EditText)findViewById(R.id.account)).getText().toString();
+                    String pwd = ((EditText) findViewById(R.id.pwd)).getText().toString();
+                    mPresenter.triggerLogin(account, pwd);
                 }
-
-                Retrofit retrofit = NetworkWrapper.create();
-                final Api api = retrofit.create(Api.class);
-
-                api.login(account,pwd)
-                    .subscribeOn(AppSchedulerProvider.io())
-                    .observeOn(AppSchedulerProvider.ui())
-                    .subscribe(new Observer<List<LoginResponse>>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-
-                        }
-
-                        @Override
-                        public void onNext(List<LoginResponse> loginResponses) {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            CommonUtils.showToast(LoginActivity.this, "Login Failed");
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            CommonUtils.showToast(LoginActivity.this, "Login Success");
-                            openHomeActivity();
-                        }
-                    });
-            }
         });
 
         findViewById(R.id.register).setOnClickListener(new View.OnClickListener() {
@@ -85,63 +40,19 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String account = ((EditText)findViewById(R.id.account)).getText().toString();
                 final String pwd = ((EditText) findViewById(R.id.pwd)).getText().toString();
-                if (TextUtils.isEmpty(account) || TextUtils.isEmpty(pwd)) {
-                    Toast.makeText(LoginActivity.this, "NO_DATA", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // Post data
-                Retrofit retrofit = NetworkWrapper.create();
-                final Api api = retrofit.create(Api.class);
-
-                RegisterRequest registerRequest = new RegisterRequest().setName(account).setPwd(pwd);
-                api.register(registerRequest)
-                    .subscribeOn(AppSchedulerProvider.io())
-                    .observeOn(AppSchedulerProvider.ui())
-                    .doOnNext(new Consumer<RegisterResponse>() {
-                       @Override
-                       public void accept(RegisterResponse registerResponse) throws Exception {
-                           CommonUtils.showToast(LoginActivity.this, (null == registerResponse) ? "Register fails" : "Register success");
-                       }
-                    })
-                    .observeOn(AppSchedulerProvider.io())
-                    .flatMap(new Function<RegisterResponse, ObservableSource<List<LoginResponse>>>() {
-                        @Override
-                        public ObservableSource<List<LoginResponse>> apply(RegisterResponse registerResponse) throws Exception {
-                            return api.login(account, pwd);
-                        }
-                    })
-                    .observeOn(AppSchedulerProvider.ui())
-                    .subscribe(new Observer<List<LoginResponse>>() {
-                        @Override
-                        public void onSubscribe(Disposable d) {
-
-                        }
-
-                        @Override
-                        public void onNext(List<LoginResponse> loginResponses) {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            CommonUtils.showToast(LoginActivity.this, "Login failed");
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            CommonUtils.showToast(LoginActivity.this, "Login Success");
-                            openHomeActivity();
-                        }
-                    });
+                mPresenter.triggerRegisterAndLogin(account, pwd);
             }
         });
     }
 
-
-    private void openHomeActivity() {
+    public void openHomeActivity() {
         Intent intent = HomeActivity.getStartIntent(LoginActivity.this);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void showToast(String msg) {
+        CommonUtils.showToast(this, msg);
     }
 }
