@@ -9,8 +9,13 @@ import android.widget.EditText;
 
 import com.chiachen.rxjavapractices.CommonUtils;
 import com.chiachen.rxjavapractices.R;
+import com.chiachen.rxjavapractices.network.NetworkWrapper;
+import com.chiachen.rxjavapractices.network.api.Api;
 import com.chiachen.rxjavapractices.presenter.LoginPresenter;
+import com.chiachen.rxjavapractices.utils.rx.AppSchedulerProvider;
 import com.chiachen.rxjavapractices.view.LoginView;
+
+import retrofit2.Retrofit;
 
 /**
  * Created by jianjiacheng on 18/12/2017.
@@ -24,7 +29,9 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mPresenter = new LoginPresenter(this);
+        Retrofit retrofit = NetworkWrapper.create();
+        final Api api = retrofit.create(Api.class);
+        mPresenter = new LoginPresenter(this, api, AppSchedulerProvider.io(), AppSchedulerProvider.ui());
 
         findViewById(R.id.login).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -54,5 +61,10 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     @Override
     public void showToast(String msg) {
         CommonUtils.showToast(this, msg);
+    }
+
+    @Override
+    public void isErrorInput() {
+
     }
 }

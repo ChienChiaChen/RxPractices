@@ -8,4 +8,6 @@ public interface LoginView {
     void showToast(String msg);
 
     void openHomeActivity();
+
+    void isErrorInput();
 }
