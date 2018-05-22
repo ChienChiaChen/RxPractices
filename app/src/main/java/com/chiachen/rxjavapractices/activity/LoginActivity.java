@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         setContentView(R.layout.activity_login);
         Retrofit retrofit = NetworkWrapper.create();
         final Api api = retrofit.create(Api.class);
-        mPresenter = new LoginPresenter(this, api, AppSchedulerProvider.io(), AppSchedulerProvider.ui());
+        mPresenter = new LoginPresenter(this, api, new AppSchedulerProvider());
 
         findViewById(R.id.login).setOnClickListener(new View.OnClickListener() {
                 @Override

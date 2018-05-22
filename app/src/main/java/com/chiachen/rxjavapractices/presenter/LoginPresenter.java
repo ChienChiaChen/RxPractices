@@ -1,6 +1,5 @@
 package com.chiachen.rxjavapractices.presenter;
 
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.chiachen.rxjavapractices.network.NetworkWrapper;
@@ -8,13 +7,13 @@ import com.chiachen.rxjavapractices.network.api.Api;
 import com.chiachen.rxjavapractices.network.login.LoginResponse;
 import com.chiachen.rxjavapractices.network.register.RegisterRequest;
 import com.chiachen.rxjavapractices.network.register.RegisterResponse;
+import com.chiachen.rxjavapractices.utils.rx.SchedulerProvider;
 import com.chiachen.rxjavapractices.view.LoginView;
 
 import java.util.List;
 
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
-import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
@@ -25,18 +24,14 @@ import retrofit2.Retrofit;
  */
 
 public class LoginPresenter extends BasePresenter {
-
     private LoginView mLoginView;
     private Api mApi;
-    private Scheduler mBackgroundScheduler;
-    private Scheduler mMainScheduler;
+    private SchedulerProvider mSchedulerProvider;
 
-
-    public LoginPresenter(LoginView loginView, Api api, @NonNull Scheduler backgroundScheduler, @NonNull Scheduler mainSchedule) {
+    public LoginPresenter(LoginView loginView, Api api, SchedulerProvider schedulerProvider) {
         mLoginView = loginView;
         mApi = api;
-        mMainScheduler = mainSchedule;
-        mBackgroundScheduler = backgroundScheduler;
+        mSchedulerProvider = schedulerProvider;
     }
 
     public void triggerLogin(String account, String pwd) {
@@ -46,8 +41,8 @@ public class LoginPresenter extends BasePresenter {
         }
 
         mApi.login(account, pwd)
-                .subscribeOn(mBackgroundScheduler)
-                .observeOn(mMainScheduler)
+                .subscribeOn(mSchedulerProvider.io())
+                .observeOn(mSchedulerProvider.ui())
                 .subscribe(new Observer<List<LoginResponse>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
@@ -83,22 +78,22 @@ public class LoginPresenter extends BasePresenter {
 
         RegisterRequest registerRequest = new RegisterRequest().setName(account).setPwd(pwd);
         api.register(registerRequest)
-                .subscribeOn(mBackgroundScheduler)
-                .observeOn(mMainScheduler)
+                .subscribeOn(mSchedulerProvider.io())
+                .observeOn(mSchedulerProvider.ui())
                 .doOnNext(new Consumer<RegisterResponse>() {
                     @Override
                     public void accept(RegisterResponse registerResponse) throws Exception {
                         mLoginView.showToast((null == registerResponse) ? "Register fails" : "Register success");
                     }
                 })
-                .observeOn(mBackgroundScheduler)
+                .observeOn(mSchedulerProvider.io())
                 .flatMap(new Function<RegisterResponse, ObservableSource<List<LoginResponse>>>() {
                     @Override
                     public ObservableSource<List<LoginResponse>> apply(RegisterResponse registerResponse) throws Exception {
                         return api.login(account, pwd);
                     }
                 })
-                .observeOn(mBackgroundScheduler)
+                .observeOn(mSchedulerProvider.ui())
                 .subscribe(new Observer<List<LoginResponse>>() {
                     @Override
                     public void onSubscribe(Disposable d) {

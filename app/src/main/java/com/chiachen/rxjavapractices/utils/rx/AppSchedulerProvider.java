@@ -8,17 +8,17 @@ import io.reactivex.schedulers.Schedulers;
  * Created by jianjiacheng on 20/12/2017.
  */
 
-public class AppSchedulerProvider  {
+public class AppSchedulerProvider implements SchedulerProvider {
 
-    public static Scheduler ui() {
+    public Scheduler ui() {
         return AndroidSchedulers.mainThread();
     }
 
-    public static Scheduler computation() {
+    public Scheduler computation() {
         return Schedulers.computation();
     }
 
-    public static Scheduler io() {
+    public Scheduler io() {
         return Schedulers.io();
     }
 }
