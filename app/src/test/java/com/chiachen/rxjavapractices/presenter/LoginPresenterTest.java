@@ -47,7 +47,16 @@ public class LoginPresenterTest {
                 login("My","Soul");
 
         mLoginPresenter.triggerLogin("My","Soul");
+        Mockito.verify(mLoginView).showToast("Login Success");
         Mockito.verify(mLoginView).openHomeActivity();
+    }
+
+    @Test
+    public void triggerLogin_fail() throws Exception {
+        Mockito.doReturn(Observable.error(new Exception())).when(mApi).login("ff","ff");
+
+        mLoginPresenter.triggerLogin("ff","ff");
+        Mockito.verify(mLoginView).isErrorInput();
     }
 
 }

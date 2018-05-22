@@ -28,7 +28,9 @@ public class LoginPresenter extends BasePresenter {
     private Api mApi;
     private SchedulerProvider mSchedulerProvider;
 
-    public LoginPresenter(LoginView loginView, Api api, SchedulerProvider schedulerProvider) {
+    public LoginPresenter(LoginView loginView,
+                          Api api,
+                          SchedulerProvider schedulerProvider) {
         mLoginView = loginView;
         mApi = api;
         mSchedulerProvider = schedulerProvider;
@@ -46,7 +48,6 @@ public class LoginPresenter extends BasePresenter {
                 .subscribe(new Observer<List<LoginResponse>>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-
                     }
 
                     @Override
